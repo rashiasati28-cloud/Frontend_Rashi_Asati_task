@@ -1,0 +1,23 @@
+{
+  "apps": [
+    {"id": "app_1", "name": "QuickPay", "platform": "android"},
+    {"id": "app_2", "name": "QuickPay", "platform": "ios"},
+    {"id": "app_3", "name": "ShopKart", "platform": "android"}
+  ],
+  "alerts": [
+    {"id": "al_106", "appId": "app_1", "threatType": "DEBUGGER_ATTACHED", "severity": "Low", "deviceModel": "Pixel 7", "osVersion": "15", "reportedAt": 1795317000000, "status": "open"},
+    {"id": "al_103", "appId": "app_1", "threatType": "HOOKING_FRAMEWORK", "severity": "HIGH", "deviceModel": null, "osVersion": "12", "reportedAt": 1795179900000, "status": "open"},
+    {"id": "al_111", "appId": "app_2", "threatType": "APP_TAMPERED", "severity": "high", "deviceModel": "iPhone 14", "osVersion": "18.0", "reportedAt": 1795212900000, "status": "open"},
+    {"id": "al_101", "appId": "app_1", "threatType": "ROOT_DETECTED", "severity": "HIGH", "deviceModel": "Redmi Note 12", "osVersion": "14", "reportedAt": 1795079700000, "status": "open"},
+    {"id": "al_108", "appId": "app_2", "threatType": "JAILBREAK_DETECTED", "severity": "HIGH", "deviceModel": "iPhone 12", "osVersion": "17.1", "reportedAt": 1794999600000, "status": "open"},
+    {"id": "al_113", "appId": "app_3", "threatType": "SCREEN_OVERLAY", "severity": "MEDIUM", "deviceModel": "Samsung Galaxy M31", "osVersion": "12", "reportedAt": 1795055700000, "status": "open"},
+    {"id": "al_104", "appId": "app_1", "threatType": "EMULATOR", "severity": "LOW", "deviceModel": "Android SDK built for x86", "osVersion": "11", "reportedAt": 1794975600000, "status": "resolved"},
+    {"id": "al_109", "appId": "app_2", "threatType": "HOOKING_FRAMEWORK", "severity": "HIGH", "deviceModel": "iPhone 13", "osVersion": "17.4", "reportedAt": 1795109100000, "status": "resolved"},
+    {"id": "al_114", "appId": "app_3", "threatType": "EMULATOR", "severity": "LOW", "deviceModel": "Genymotion", "osVersion": "10", "reportedAt": 1795331100000, "status": "open"},
+    {"id": "al_107", "appId": "app_1", "threatType": "SCREEN_RECORDING", "severity": "MEDIUM", "deviceModel": "OnePlus Nord CE 3", "reportedAt": 1795164300000, "status": "open"},
+    {"id": "al_102", "appId": "app_1", "threatType": "SCREEN_OVERLAY", "severity": "medium", "deviceModel": "Samsung Galaxy A14", "osVersion": "13", "reportedAt": 1795243200000, "status": "open"},
+    {"id": "al_112", "appId": "app_3", "threatType": "ROOT_DETECTED", "severity": "HIGH", "deviceModel": "Realme 9", "osVersion": "13", "reportedAt": 1795262400000, "status": "resolved"},
+    {"id": "al_105", "appId": "app_1", "threatType": "APP_TAMPERED", "severity": "HIGH", "deviceModel": "Vivo Y21", "osVersion": "12", "reportedAt": 1795293000000, "status": "open"},
+    {"id": "al_110", "appId": "app_2", "threatType": "DEBUGGER_ATTACHED", "severity": "MEDIUM", "deviceModel": "iPhone XR", "osVersion": "16.7", "reportedAt": 1795344600000, "status": "open"}
+  ]
+}
