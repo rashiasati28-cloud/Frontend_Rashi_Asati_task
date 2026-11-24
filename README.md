@@ -13,26 +13,24 @@ A Flutter Web dashboard for monitoring and resolving application security alerts
    ```bash
    flutter run -d chrome
    ```
-4. (Optional) Run static code analysis:
+4. Run static code analysis:
    ```bash
    flutter analyze
    ```
 
+> **Note**: To test the error screen, set `simulateError = true` in `lib/data/alert_repository.dart`.
+
 ### Flutter Version
 ```
-PS D:\frontend_Rashi_Asati> flutter --version
-Flutter 3.50.1 • channel stable •
-https://github.com/flutter/flutter.git
-Framework • revision ae9b586f34 (5 days ago) • 2026-11-18 17:01:07
--0800
-Engine • hash 51379e6df48ea8ee7205623b90fe66491cad8df3 (revision
-4d35714800) (6 days ago) • 2026-11-18 01:50:07.000Z
+Flutter 3.50.1 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision ae9b586f34 (5 days ago) • 2026-11-18 17:01:07 -0800
+Engine • hash 51379e6df48ea8ee7205623b90fe66491cad8df3 (revision 4d35714800) (6 days ago) • 2026-11-18 01:50:07.000Z
 Tools • Dart 3.14.0 • DevTools 2.61.0
 ```
 
 ## Project structure
 
-- `lib/main.dart` - Application entry point, `MultiProvider` dependency injection, and `GoRouter` declarative route definitions.
+- `lib/main.dart` - Application entry point, `MultiProvider` setup, and `GoRouter` declarative route definitions.
 - `lib/constants/threat_names.dart` - `threatNameMap` mapping raw threat codes to human-readable names and fallback lookup helper.
 - `lib/models/alert_enums.dart` - `Severity` (High, Medium, Low) and `AlertStatus` (Open, Resolved) enums with safe case-insensitive parsing.
 - `lib/models/app_info.dart` - `AppInfo` model with ID, name, platform, and `displayName` getter formatted as "QuickPay (iOS)".
@@ -49,7 +47,8 @@ Tools • Dart 3.14.0 • DevTools 2.61.0
 - `lib/widgets/error_view.dart` - Friendly error state banner with a "Retry" button to trigger reload.
 - `assets/alerts.json` - Original mock security alerts data (never modified).
 - `pubspec.yaml` - Project specification containing only approved packages (`provider`, `go_router`, `intl`) and asset configuration.
-test/widget_test.dart - basic test
+- `test/widget_test.dart` - Unit tests verifying threat name mapping, enum parsing, data loading, expected metrics, resolution, and messy data handling.
+- `web/` - Flutter Web entry and bootstrap files including `index.html`, `manifest.json`, and web app icons.
 
 ## What works and what does not
 
@@ -67,9 +66,9 @@ test/widget_test.dart - basic test
 - **Responsive Layout**: Fluid layout across 400px to 1280px widths with no overflow stripes.
 - **Analysis**: Clean `flutter analyze` ("No issues found!").
 
-### What does not:
-- **Persistence**: Resolved alerts are updated in-memory for the duration of the browser session; changes are not written back to `assets/alerts.json` (per spec).
-- **Bonus Features**: Search bar, CSV export, table view, and deep linking beyond spec routes were intentionally excluded to respect timed constraints.
+### What does not work:
+- Resolved alerts are kept in memory only, so a page reload brings them back to open.
+- No bonus features (search, CSV, table layout, deep links beyond the three routes, extra unit tests).
 
 ## How AI helped
 
@@ -77,17 +76,15 @@ test/widget_test.dart - basic test
 
 ## Questions
 
-### 1. Where is the list of alerts kept and how does the Dashboard learn about a resolved alert?
-The list of alerts is maintained in memory inside the `AlertsProvider` class (`lib/state/alerts_provider.dart`) as a private field `_data!.alerts`. When an alert is resolved on the Alert Detail screen, the `provider.resolveAlert(alertId)` method is invoked. This replaces the target alert with a resolved copy (`alert.copyWith(status: AlertStatus.resolved)`) and calls `notifyListeners()`. Because the application is wrapped in a top-level `ChangeNotifierProvider` at the root of `main.dart`, both `DashboardScreen` and `AlertsScreen` listen to the exact same provider instance using `context.watch<AlertsProvider>()`. Calling `notifyListeners()` instantly triggers a rebuild of the dashboard widgets, which re-evaluates `openAlertsCount` and `highOpenAlertsCount` in real time with no page reload.
+### 1. Where does your app keep the list of alerts, and how does the Dashboard learn about a resolved alert?
+The list of alerts is kept in memory inside the `AlertsProvider` class (`lib/state/alerts_provider.dart`) in `_data!.alerts`. When an alert is resolved on the Alert Detail screen, `resolveAlert()` updates its status to `AlertStatus.resolved` in that list and calls `notifyListeners()`. Because `DashboardScreen` and `AlertsScreen` both listen to this shared provider instance via `context.watch<AlertsProvider>()`, `notifyListeners()` immediately triggers a rebuild of the dashboard widgets, updating the open alert counts instantly with no page reload.
 
 ### 2. What would need to be changed to use a real API instead of the local JSON file?
-Only the data layer (`lib/data/alert_repository.dart`) would need modification:
-1. Replace `rootBundle.loadString('assets/alerts.json')` with an HTTP client call (e.g., using `package:http`) to send a `GET` request to the backend endpoint (e.g. `client.get(Uri.parse('https://api.bugsmirror.com/v1/alerts'))`).
-2. Add an API resolution method, such as `Future<void> resolveAlertApi(String alertId)`, that sends a `POST` or `PATCH` request to the backend (e.g., `/v1/alerts/{id}/resolve`).
-3. Inside `AlertsProvider.resolveAlert(alertId)`, call `await _repository.resolveAlertApi(alertId)` to persist the change on the server before or alongside updating the local in-memory list and notifying listeners.
-The UI screens, router, widgets, and models would remain untouched because they interact exclusively with the repository abstraction and provider contract.
+Only `AlertRepository` (`lib/data/alert_repository.dart`) needs to change:
+- Replace `rootBundle.loadString('assets/alerts.json')` with an HTTP GET request (e.g. using `package:http`) to fetch alerts from your backend endpoint.
+- Add an API call in the repository (e.g. an HTTP PATCH or POST request) that notifies the backend when an alert is resolved in `resolveAlert()`.
+The UI screens, router, widgets, and models would stay completely unchanged because they only interact with the provider and the repository interface.
 
 ## Video
-https://drive.google.com/file/d/1BXswUcD4aP_p5JbqJ0KSvhkjN_w9lUaG/view?usp=drive_link
 
-<!-- Placeholder: Paste your screen recording / demo video link here -->
+https://drive.google.com/file/d/1BXswUcD4aP_p5JbqJ0KSvhkjN_w9lUaG/view?usp=drive_link
